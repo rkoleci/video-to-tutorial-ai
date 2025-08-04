@@ -18,23 +18,21 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "migration:generate:main": "npm run build && typeorm-ts-node-commonjs migration:generate ./src/migrations/main/$M_NAME -d ./src/typeorm.config.ts",
     "migration:run:main": "npm run build && typeorm-ts-node-commonjs migration:run -d ./src/typeorm.config.ts",
-    
     "migration:generate:tenant": "typeorm-ts-node-commonjs migration:generate ./src/database/migrations/tenant/$M_NAME -d ./src/config/typeorm.tenant.config.ts",
     "migration:revert:main": "typeorm-ts-node-commonjs migration:revert -d ./src/config/typeorm.config.ts",
     "migration:revert:tenant": "typeorm-ts-node-commonjs migration:revert -d ./src/config/typeorm.tenant.config.ts",
     "migration:run:tenant": "yarn build && typeorm-ts-node-commonjs migration:run -d ./src/config/typeorm.tenant.config.ts",
     "migration:run:all-tenants": "yarn build && ts-node -r tsconfig-paths/register src/scripts/run-all-tenant-migrations.ts"
-
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",
+    "amqplib": "^0.10.8",
     "dotenv": "^17.2.1",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",

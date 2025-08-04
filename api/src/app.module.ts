@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TutorialModule } from './tutorial/tutorial.module';
+import { RabbitMqService } from './rabbitmq/rabbitmq.service';
+import { RabbitMqModule } from './rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -35,7 +37,8 @@ import { TutorialModule } from './tutorial/tutorial.module';
       // inject: [ ],
     }),
     // Add your other feature modules here
-    TutorialModule
+    TutorialModule,
+    RabbitMqModule
   ], 
   controllers: [AppController],
   providers: [AppService],
