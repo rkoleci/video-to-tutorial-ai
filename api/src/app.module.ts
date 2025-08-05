@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TutorialModule } from './tutorial/tutorial.module';
 import { RabbitMqService } from './rabbitmq/rabbitmq.service';
 import { RabbitMqModule } from './rabbitmq/rabbitmq.module';
+import ExtractionService from './extraction/extraction.service';
+import { ExtractionModule } from './extraction/extraction.module';
 
 @Module({
   imports: [
@@ -38,7 +40,8 @@ import { RabbitMqModule } from './rabbitmq/rabbitmq.module';
     }),
     // Add your other feature modules here
     TutorialModule,
-    RabbitMqModule
+    RabbitMqModule,
+    ExtractionModule
   ], 
   controllers: [AppController],
   providers: [AppService],
