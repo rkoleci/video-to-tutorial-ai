@@ -8,7 +8,7 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     try {
-      this.connection = await connect('amqp://myuser:mypassword@localhost:5672');
+      this.connection = await connect(`amqp://${process.env.RBMQ_USER}:${process.env.RMBQ_PASSWORD}@localhost:${process.env.RBMQ_PORT}`);
       this.channel = await this.connection.createChannel();
       console.log('✅ RabbitMQ connected and channel created');
 
@@ -24,34 +24,35 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
         throw new Error('Channel is not initialized');
       }
 
-      const queue = 'transcribe';
-      const msg = title;
+      const queue = 'video';
+      const msg = title || 'message'
 
-      await this.channel.assertQueue(queue, { durable: false });
+      await this.channel.assertQueue(queue, { durable: true });
       this.channel.sendToQueue(queue, Buffer.from(msg));
       console.log('📤 Sent message:', msg);
 
       
-      this.receiveMessage('transcribe')
+      // this.receiveMessage('transcribe')
     } catch (error) {
       console.error('❌ Failed to send message:', error);
     }
   }
 
   async receiveMessage(queue: string): Promise<void> {
+    console.log(111, { queue})
      if (!this.channel) {
         throw new Error('Channel is not initialized');
       }
 
 
         this.channel.assertQueue(queue, {
-            durable: false
+            durable: true
         });
 
         console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
 
-        this.channel.consume(queue, function(msg) {
-            console.log(" [x] Received %s", msg.content.toString());
+        this.channel.consume(queue, function(msg) { 
+            console.log(" [x] Received %s", msg.content.toString(), ' Time: ', new Date().toISOString());
         }, {
             noAck: true
         });

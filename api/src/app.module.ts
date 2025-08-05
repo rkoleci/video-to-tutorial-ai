@@ -44,3 +44,5 @@ import { RabbitMqModule } from './rabbitmq/rabbitmq.module';
   providers: [AppService],
 })
 export class AppModule {}
+
+// next, setup multiole nodejs cosnumers, load testing

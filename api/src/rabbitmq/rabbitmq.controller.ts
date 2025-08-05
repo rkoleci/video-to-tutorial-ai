@@ -5,14 +5,14 @@ import { RabbitMqService } from './rabbitmq.service';
 export class RabbitMqkController {
   constructor(private readonly rmqService: RabbitMqService) {}
 
-//   @Get()
-//   getAllTasks(): Promise<void> {
-//     return this.rmqService.getAllTasks();
-//   }
+  @Get(":queue")
+  receiveMessages(@Param('queue')  q: string): Promise<void> {
+    return this.rmqService.receiveMessage(q);
+  }
 
   @Post()
   createTask(@Body('title') title: string): Promise<void> {
-    return this.rmqService.sendMessage(title);
+    return this.rmqService.sendMessage('title');
   }
  
 }
