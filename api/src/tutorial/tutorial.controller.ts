@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import TutorialService from './tutorial.service';
 import { Tutorial } from './tutorial.entity';
 
@@ -9,6 +9,11 @@ export default class TutorialController {
   @Get()
   async findAll(): Promise<Tutorial[]> {
     return this.tutorialService.findAll();
+  }
+
+    @Get(":id")
+  async findById(@Param('id') id: string): Promise<Tutorial | undefined> {
+    return this.tutorialService.findById(id);
   }
 
   @Post()

@@ -9,7 +9,8 @@
 /api-testing/dist
 /api-testing/node_modules
 /api-testing/build
- 
+
+/api/.env.development
 
 # Logs
 logs

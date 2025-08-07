@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { RedisModule } from '@nestjs-modules/ioredis';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { TutorialModule } from './tutorial/tutorial.module';
 import { RabbitMqService } from './rabbitmq/rabbitmq.service';
 import { RabbitMqModule } from './rabbitmq/rabbitmq.module';
@@ -10,8 +12,8 @@ import ExtractionService from './extraction/extraction.service';
 import { ExtractionModule } from './extraction/extraction.module';
 import { FileModule } from './file/file.module';
 import { TextModule } from './text/text.module';
-import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { MyRedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -43,16 +45,22 @@ import { AuthModule } from './auth/auth.module';
       }),
       // inject: [ ],
     }),
+    
+    
+
     // Add your other feature modules here
     TutorialModule,
     // RabbitMqModule,
     ExtractionModule,
     FileModule,
     TextModule,
-    AuthModule
-  ], 
+    AuthModule,
+    MyRedisModule
+    ], 
   controllers: [AppController],
-  providers: [AppService],
+   providers: [AppService], 
+   
+
 })
 export class AppModule {}
 
