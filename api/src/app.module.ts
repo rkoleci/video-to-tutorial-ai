@@ -11,6 +11,7 @@ import { ExtractionModule } from './extraction/extraction.module';
 import { FileModule } from './file/file.module';
 import { TextModule } from './text/text.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -47,7 +48,8 @@ import { ConfigModule } from '@nestjs/config';
     // RabbitMqModule,
     ExtractionModule,
     FileModule,
-    TextModule
+    TextModule,
+    AuthModule
   ], 
   controllers: [AppController],
   providers: [AppService],
