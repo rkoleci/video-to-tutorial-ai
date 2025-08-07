@@ -10,13 +10,15 @@ import ExtractionService from './extraction/extraction.service';
 import { ExtractionModule } from './extraction/extraction.module';
 import { FileModule } from './file/file.module';
 import { TextModule } from './text/text.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    // ConfigModule.forRoot({
-    //   isGlobal: true,
-    // }),
-    // This is where the TypeOrmModule.forRootAsync goes
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env', 
+    }),
+     
     TypeOrmModule.forRootAsync({
       // imports: [ConfigModule],
       useFactory: ( ) => ({

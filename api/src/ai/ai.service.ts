@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 
 @Injectable()
@@ -6,12 +7,12 @@ export default class AIService {
   private readonly logger = new Logger(AIService.name);
   private openai: OpenAI;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     const openai = new OpenAI({
-      baseURL: process.env.DEEPSEEK_API_URL,
-      apiKey: process.env.DEEPSEEK_API_KEY,
+      baseURL: this.configService.get('DEEPSEEK_API_URL'),
+      apiKey: this.configService.get('DEEPSEEK_API_KEY'),
     });
-
+    
     this.openai = openai;
   }
 

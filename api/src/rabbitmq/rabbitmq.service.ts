@@ -1,4 +1,5 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { connect, Connection, Channel } from 'amqplib';
 
 @Injectable()
@@ -6,9 +7,11 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
   private connection: Connection;
   private channel: Channel;
 
+  constructor(private configService: ConfigService) {}
+
   async onModuleInit() {
     try {
-      this.connection = await connect(`amqp://${process.env.RBMQ_USER}:${process.env.RMBQ_PASSWORD}@localhost:${process.env.RBMQ_PORT}`);
+      this.connection = await connect(`amqp://${this.configService.get('RBMQ_USER')}:${this.configService.get('RMBQ_PASSWORD')}@localhost:${this.configService.get('RBMQ_PORT')}`);
       this.channel = await this.connection.createChannel();
       console.log('✅ RabbitMQ connected and channel created');
 
