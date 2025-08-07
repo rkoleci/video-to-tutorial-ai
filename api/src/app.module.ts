@@ -9,6 +9,7 @@ import { RabbitMqModule } from './rabbitmq/rabbitmq.module';
 import ExtractionService from './extraction/extraction.service';
 import { ExtractionModule } from './extraction/extraction.module';
 import { FileModule } from './file/file.module';
+import { TextModule } from './text/text.module';
 
 @Module({
   imports: [
@@ -41,9 +42,10 @@ import { FileModule } from './file/file.module';
     }),
     // Add your other feature modules here
     TutorialModule,
-    RabbitMqModule,
+    // RabbitMqModule,
     ExtractionModule,
-    FileModule
+    FileModule,
+    TextModule
   ], 
   controllers: [AppController],
   providers: [AppService],

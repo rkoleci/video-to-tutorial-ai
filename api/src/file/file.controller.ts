@@ -6,7 +6,7 @@ export class FileController {
   constructor(private readonly service: FileService) {}
 
   @Get(":fid")
-  downloadFile(@Param('fid') fid: string): Promise<void> {
+  downloadFile(@Param('fid') fid: string): Promise<string> {
     return this.service.downloadFile(fid);
   }
  
