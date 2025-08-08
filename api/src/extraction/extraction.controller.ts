@@ -9,32 +9,24 @@ import {
   Query,
 } from '@nestjs/common';
 import ExtractionService from './extraction.service';
-import ytdl from 'ytdl-core';
-import * as path from 'path';
 
 @Controller('extraction')
 export class ExtractionController {
   constructor(private readonly service: ExtractionService) {}
 
-  @Get('download')
-  async download(@Query('url') url: string) {
-    if (!url || !ytdl.validateURL(url)) {
-      return { error: 'Invalid URL' };
+ @Post('extract')
+  async extractAudio(@Body('videoId') videoId: string) {
+    if (!videoId) {
+      throw new Error('Video ID is required');
     }
 
-    const videoPath = path.resolve(__dirname, '../../downloads/video.mp4');
-    const audioPath = path.resolve(__dirname, '../../downloads/audio.mp3');
-
-    try {
-      await this.service.downloadVideo(url, videoPath);
-      await this.service.extractAudioFile(videoPath, audioPath);
-      return {
-        message: 'Download and extraction complete',
-        videoPath,
-        audioPath,
-      };
-    } catch (err) {
-      return { error: err.message };
-    }
+    const audioFilePath = await this.service.downloadAndExtractAudio(videoId);
+    
+    return {
+      success: true,
+      message: 'Audio extracted successfully',
+      audioFilePath,
+    };
   }
+
 }
