@@ -20,7 +20,7 @@ export class ExtractionController {
       throw new Error('Video ID is required');
     }
 
-    const audioFilePath = await this.service.downloadAndExtractAudio(videoId);
+    const audioFilePath = await this.service.downloadAudio(videoId);
     
     return {
       success: true,
