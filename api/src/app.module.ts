@@ -55,7 +55,7 @@ import { MyRedisModule } from './redis/redis.module';
     FileModule,
     TextModule,
     AuthModule,
-    MyRedisModule
+    // MyRedisModule
     ], 
   controllers: [AppController],
    providers: [AppService], 
