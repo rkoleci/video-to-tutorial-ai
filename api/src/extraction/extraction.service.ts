@@ -1,85 +1,88 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import * as fs from 'fs';
+import {exec} from 'youtube-dl-exec';
 import * as path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export default class ExtractionService {
   private readonly logger = new Logger(ExtractionService.name);
-  private readonly audioPath = './audio';
-  private readonly execAsync = promisify(exec);
-  private ytDlpReady = false;
+
+  private readonly audioPath = path.resolve('./downloads/audio');
+  private readonly videoPath = path.resolve('./downloads/video');
 
   constructor() {
-    this.initializeService();
-  }
-
-  private async initializeService(): Promise<void> {
-    this.ensureDirectoriesExist();
-    await this.ensureYtDlpInstalled();
-  }
-
-  private ensureDirectoriesExist(): void {
+    // Ensure download directories exist
     if (!fs.existsSync(this.audioPath)) {
       fs.mkdirSync(this.audioPath, { recursive: true });
     }
-  }
-
-  private async ensureYtDlpInstalled(): Promise<void> {
-    try {
-      await this.execAsync('yt-dlp --version');
-      this.logger.log('yt-dlp is already installed');
-      this.ytDlpReady = true;
-      return;
-    } catch (error) {
-      this.logger.log('yt-dlp not found, attempting to install...');
-    }
-
-    try {
-      // Install yt-dlp using pip
-      await this.execAsync('pip install yt-dlp');
-      this.ytDlpReady = true;
-      this.logger.log('yt-dlp installation completed successfully');
-    } catch (error) {
-      this.logger.error('Failed to install yt-dlp:', error.message);
-      throw new Error('yt-dlp installation failed');
+    if (!fs.existsSync(this.videoPath)) {
+      fs.mkdirSync(this.videoPath, { recursive: true });
     }
   }
 
-  async downloadAudio(videoId: string): Promise<string> {
+  /**
+   * Download audio only (mp3) from a video URL
+   * @param url string YouTube (or other) video URL
+   * @param output optional filename (without path)
+   */
+  async downloadAudio(url: string, output?: string): Promise<string> {
     try {
-      if (!this.ytDlpReady) {
-        await this.ensureYtDlpInstalled();
-      }
+      // Step 1: Get video info
+      this.logger.log(`Fetching video info for ${url}`);
+      const videoInfo = await exec(url, { dumpSingleJson: true });
+      const videoTitle = 'video titele 1';
 
-      const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-      const outputTemplate = path.join(this.audioPath, '%(title)s.%(ext)s');
-      
-      const command = `yt-dlp -x --audio-format mp3 --audio-quality 0 -o "${outputTemplate}" "${videoUrl}"`;
-      
-      this.logger.log(`Executing: ${command}`);
-      const { stdout, stderr } = await this.execAsync(command);
-      
-      if (stderr && !stderr.includes('[download]')) {
-        throw new Error(stderr);
-      }
+      // Determine output file path
+      const outputFileName = output || `${videoTitle}.mp3`;
+      const outputFilePath = path.resolve(this.audioPath, outputFileName);
 
-      // Parse output to get filename
-      const match = stdout.match(/\[ExtractAudio\] Destination: (.+)/);
-      const audioFilePath = match ? match[1] : null;
+      this.logger.log(`Downloading audio to ${outputFilePath}`);
 
-      if (!audioFilePath || !fs.existsSync(audioFilePath)) {
-        throw new Error('Audio file not found after extraction');
-      }
+      // Step 2: Download audio only, convert to mp3
+      await exec(url, {
+        extractAudio: true,
+        audioFormat: 'mp3',
+        output: outputFilePath,
+        // You can add other options like audioQuality: '0' (best)
+      });
 
-      this.logger.log(`Audio extraction completed: ${audioFilePath}`);
-      return audioFilePath;
-
+      this.logger.log(`Audio downloaded successfully: ${outputFilePath}`);
+      return outputFilePath;
     } catch (error) {
-      this.logger.error(`Error with yt-dlp: ${error.message}`);
+      this.logger.error(`Failed to download audio: ${error.message}`, error.stack);
       throw error;
     }
   }
 
+  /**
+   * Download video in best format available (mp4)
+   * @param url string video URL
+   * @param output optional filename (without path)
+   */
+  async downloadVideo(url: string, output?: string): Promise<string> {
+    try {
+      // Step 1: Get video info
+      this.logger.log(`Fetching video info for ${url}`);
+      const videoInfo = await exec(url, { dumpSingleJson: true });
+      const videoTitle = 'video titele 1';
+
+      // Determine output file path
+      const outputFileName = output || `${videoTitle}.mp4`;
+      const outputFilePath = path.resolve(this.videoPath, outputFileName);
+
+      this.logger.log(`Downloading video to ${outputFilePath}`);
+
+      // Step 2: Download video with best format mp4
+      await exec(url, {
+        output: outputFilePath,
+        format: 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',
+      });
+
+      this.logger.log(`Video downloaded successfully: ${outputFilePath}`);
+      return outputFilePath;
+    } catch (error) {
+      this.logger.error(`Failed to download video: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
 }
