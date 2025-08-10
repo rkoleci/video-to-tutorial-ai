@@ -4,21 +4,22 @@ import Redis from 'ioredis';
 import { Repository } from 'typeorm';
 import { StatusEnum, Tutorial } from './tutorial.entity';
 import { QueueService, RabbitMQueueNames } from 'src/rabbitmq/queue.service';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export default class TutorialService {
-  private readonly CACHE_KEY = 'tutorials'; // Redis hash key
+  private readonly CACHE_KEY = 'tutorials';  
 
   constructor(
     @InjectRepository(Tutorial)
     private tutorialRepository: Repository<Tutorial>,
     private readonly queueService: QueueService,
-    @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
+    private readonly redisService: RedisService,
   ) {}
 
   async findAll(): Promise<Tutorial[]> {
     try {
-      const cachedTutorials = await this.redisClient.hgetall(this.CACHE_KEY);
+      const cachedTutorials = await this.redisService.hgetall(this.CACHE_KEY);
 
       if (Object.keys(cachedTutorials).length > 0) {
         console.log('Serving tutorials from Redis cache');
@@ -28,7 +29,7 @@ export default class TutorialService {
       console.log('Fetching tutorials from database');
       const tutorials = await this.tutorialRepository.find();
 
-      const pipeline = this.redisClient.pipeline();
+      const pipeline = this.redisService.pipeline();
       tutorials.forEach((tutorial) => {
         pipeline.hset(this.CACHE_KEY, tutorial.id.toString(), JSON.stringify(tutorial));
       });
@@ -43,7 +44,7 @@ export default class TutorialService {
 
   async findById(id: string): Promise<Tutorial | undefined> {
     try {
-      const cachedTutorial = await this.redisClient.hget(this.CACHE_KEY, id);
+      const cachedTutorial = await this.redisService.hget(this.CACHE_KEY, id);
 
       if (cachedTutorial) {
         console.log(`Serving tutorial ${id} from Redis cache`);
@@ -55,7 +56,7 @@ export default class TutorialService {
         where: { id: Number(id) },
       });
 
-      await this.redisClient.hset(this.CACHE_KEY, id, JSON.stringify(tutorial));
+      await this.redisService.hset(this.CACHE_KEY, id, JSON.stringify(tutorial));
 
       return tutorial;
     } catch (error) {
@@ -72,7 +73,7 @@ export default class TutorialService {
     const savedTutorial = await this.tutorialRepository.save(newTutorial);
 
     try {
-      await this.redisClient.hset(
+      await this.redisService.hset(
         this.CACHE_KEY,
         savedTutorial.id.toString(),
         JSON.stringify(savedTutorial),
@@ -96,7 +97,7 @@ export default class TutorialService {
     const savedTutorial = await this.tutorialRepository.save(updatedTutorial);
 
     try {
-      await this.redisClient.hset(
+      await this.redisService.hset(
         this.CACHE_KEY,
         savedTutorial.id.toString(),
         JSON.stringify(savedTutorial),
@@ -117,7 +118,7 @@ export default class TutorialService {
     const savedTutorial = await this.tutorialRepository.save(tutorial);
 
     try {
-      await this.redisClient.hset(
+      await this.redisService.hset(
         this.CACHE_KEY,
         savedTutorial.id.toString(),
         JSON.stringify(savedTutorial),
