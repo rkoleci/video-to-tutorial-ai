@@ -2,39 +2,35 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Redis from 'ioredis';
 import { Repository } from 'typeorm';
-import { Tutorial } from './tutorial.entity';
+import { StatusEnum, Tutorial } from './tutorial.entity';
 
 @Injectable()
 export default class TutorialService {
-
-  private readonly CACHE_KEY = 'tutorials:all';
-  private readonly CACHE_TTL = 3600; 
+  private readonly CACHE_KEY = 'tutorials'; // Redis hash key
 
   constructor(
     @InjectRepository(Tutorial)
     private tutorialRepository: Repository<Tutorial>,
-     @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
+    @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
   ) {}
 
   async findAll(): Promise<Tutorial[]> {
-     try {
-      const cachedTutorials = await this.redisClient.get(this.CACHE_KEY);
-      
-      if (cachedTutorials) {
+    try {
+      const cachedTutorials = await this.redisClient.hgetall(this.CACHE_KEY);
+
+      if (Object.keys(cachedTutorials).length > 0) {
         console.log('Serving tutorials from Redis cache');
-        return JSON.parse(cachedTutorials);
+        return Object.values(cachedTutorials).map((t) => JSON.parse(t));
       }
 
-      // If not in cache, get from database
       console.log('Fetching tutorials from database');
       const tutorials = await this.tutorialRepository.find();
-      
-      // Store in Redis cache for future requests
-      await this.redisClient.setex(
-        this.CACHE_KEY, 
-        this.CACHE_TTL, 
-        JSON.stringify(tutorials)
-      );
+
+      const pipeline = this.redisClient.pipeline();
+      tutorials.forEach((tutorial) => {
+        pipeline.hset(this.CACHE_KEY, tutorial.id.toString(), JSON.stringify(tutorial));
+      });
+      await pipeline.exec();
 
       return tutorials;
     } catch (error) {
@@ -43,45 +39,88 @@ export default class TutorialService {
     }
   }
 
-  async findById(id: string): Promise<Tutorial | undefined> {  // check flow
-     try {
-      const cachedTutorials = await this.redisClient.get(this.CACHE_KEY);
-      
-      if (cachedTutorials) {
-        console.log('Serving tutorials from Redis cache');
-        return JSON.parse(cachedTutorials)?.find(t => t.id == id);
+  async findById(id: string): Promise<Tutorial | undefined> {
+    try {
+      const cachedTutorial = await this.redisClient.hget(this.CACHE_KEY, id);
+
+      if (cachedTutorial) {
+        console.log(`Serving tutorial ${id} from Redis cache`);
+        return JSON.parse(cachedTutorial);
       }
 
-      // If not in cache, get from database
-      console.log('Fetching tutorials from database');
+      console.log(`Fetching tutorial ${id} from database`);
       const tutorial = await this.tutorialRepository.findOneOrFail({
-        where: { id: Number(id) }
+        where: { id: Number(id) },
       });
-      
-      // Store in Redis cache for future requests
-      if (tutorial) {
-        await this.redisClient.setex(
-        this.CACHE_KEY, 
-        this.CACHE_TTL, 
-        JSON.stringify([...cachedTutorials || [], tutorial]) // check ths
-      );
-      }
+
+      await this.redisClient.hset(this.CACHE_KEY, id, JSON.stringify(tutorial));
 
       return tutorial;
     } catch (error) {
-      console.error('Redis error, falling back to database:', error);
-       const tutorials = await this.tutorialRepository.findOneOrFail({
-        where: { id: Number(id) }
+      console.error('Redis error or DB miss:', error);
+      return this.tutorialRepository.findOneOrFail({
+        where: { id: Number(id) },
       });
-
-      return tutorials
     }
   }
 
   async create(tutorial: Partial<Tutorial>): Promise<Tutorial> {
     const newTutorial = this.tutorialRepository.create(tutorial);
-    return this.tutorialRepository.save(newTutorial);
+    newTutorial.status = StatusEnum.PENDING;
+    const savedTutorial = await this.tutorialRepository.save(newTutorial);
+
+    try {
+      await this.redisClient.hset(
+        this.CACHE_KEY,
+        savedTutorial.id.toString(),
+        JSON.stringify(savedTutorial),
+      );
+    } catch (cacheError) {
+      console.error('Failed to cache new tutorial:', cacheError);
+    }
+
+    return savedTutorial;
   }
 
-  // Add other CRUD operations as needed
+  async update(id: string, partialTutorial: Partial<Tutorial>): Promise<Tutorial> {
+    const tutorial = await this.tutorialRepository.findOneOrFail({
+      where: { id: Number(id) },
+    });
+
+    const updatedTutorial = this.tutorialRepository.merge(tutorial, partialTutorial);
+    const savedTutorial = await this.tutorialRepository.save(updatedTutorial);
+
+    try {
+      await this.redisClient.hset(
+        this.CACHE_KEY,
+        savedTutorial.id.toString(),
+        JSON.stringify(savedTutorial),
+      );
+    } catch (cacheError) {
+      console.error('Failed to update Redis cache after tutorial update:', cacheError);
+    }
+
+    return savedTutorial;
+  }
+
+  async updateStatus(id: string, status: StatusEnum): Promise<Tutorial> {
+    const tutorial = await this.tutorialRepository.findOneOrFail({
+      where: { id: Number(id) },
+    });
+
+    tutorial.status = status;
+    const savedTutorial = await this.tutorialRepository.save(tutorial);
+
+    try {
+      await this.redisClient.hset(
+        this.CACHE_KEY,
+        savedTutorial.id.toString(),
+        JSON.stringify(savedTutorial),
+      );
+    } catch (cacheError) {
+      console.error('Failed to update Redis cache after status update:', cacheError);
+    }
+
+    return savedTutorial;
+  }
 }

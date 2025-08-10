@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
 import TutorialService from './tutorial.service';
-import { Tutorial } from './tutorial.entity';
+import { StatusEnum, Tutorial } from './tutorial.entity';
 
 @Controller('tutorials')
 export default class TutorialController {
@@ -11,7 +11,7 @@ export default class TutorialController {
     return this.tutorialService.findAll();
   }
 
-    @Get(":id")
+  @Get(':id')
   async findById(@Param('id') id: string): Promise<Tutorial | undefined> {
     return this.tutorialService.findById(id);
   }
@@ -19,5 +19,21 @@ export default class TutorialController {
   @Post()
   async create(@Body() tutorial: Tutorial): Promise<Tutorial> {
     return this.tutorialService.create(tutorial);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() partialTutorial: Partial<Tutorial>,
+  ): Promise<Tutorial> {
+    return this.tutorialService.update(id, partialTutorial);
+  }
+
+  @Put(':id/status')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body('status') status: StatusEnum,
+  ): Promise<Tutorial> {
+    return this.tutorialService.updateStatus(id, status);
   }
 }
