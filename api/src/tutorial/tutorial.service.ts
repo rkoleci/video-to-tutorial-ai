@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Redis from 'ioredis';
 import { Repository } from 'typeorm';
 import { StatusEnum, Tutorial } from './tutorial.entity';
+import { QueueService, RabbitMQueueNames } from 'src/rabbitmq/queue.service';
 
 @Injectable()
 export default class TutorialService {
@@ -11,6 +12,7 @@ export default class TutorialService {
   constructor(
     @InjectRepository(Tutorial)
     private tutorialRepository: Repository<Tutorial>,
+    private readonly queueService: QueueService,
     @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
   ) {}
 
@@ -66,7 +68,7 @@ export default class TutorialService {
 
   async create(tutorial: Partial<Tutorial>): Promise<Tutorial> {
     const newTutorial = this.tutorialRepository.create(tutorial);
-    newTutorial.status = StatusEnum.PENDING;
+    newTutorial.status = StatusEnum.PROCESSING;
     const savedTutorial = await this.tutorialRepository.save(newTutorial);
 
     try {
@@ -78,6 +80,9 @@ export default class TutorialService {
     } catch (cacheError) {
       console.error('Failed to cache new tutorial:', cacheError);
     }
+
+    console.log(111, String(savedTutorial.id))
+    this.queueService.publishMessage(RabbitMQueueNames.Q_DOWNLOAD_VIDEO, String(savedTutorial.id))
 
     return savedTutorial;
   }

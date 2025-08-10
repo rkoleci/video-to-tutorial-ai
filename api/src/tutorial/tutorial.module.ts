@@ -4,10 +4,11 @@ import { Tutorial } from './tutorial.entity';
 import TutorialService from './tutorial.service';
 import TutorialController from './tutorial.controller';
 import { MyRedisModule } from 'src/redis/redis.module';
+import { RabbitMqModule } from 'src/rabbitmq/rabbitmq.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Tutorial]), MyRedisModule ],
-  providers: [TutorialService],
+  imports: [TypeOrmModule.forFeature([Tutorial]), MyRedisModule, RabbitMqModule ],
+  providers: [TutorialService,],
   controllers: [TutorialController],
 })
 export class TutorialModule {}
