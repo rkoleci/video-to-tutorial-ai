@@ -3,9 +3,11 @@ import ExtractionService from './extraction.service';
 import { ExtractionController } from './extraction.controller';
 import { PuppeteerYoutubeSubtitlesService } from './pupeeter.service';
 import { RabbitMqModule } from 'src/rabbitmq/rabbitmq.module';
+import { UserModule } from 'src/user/user.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [RabbitMqModule ],
+  imports: [RabbitMqModule,AuthModule ],
   providers: [ExtractionService, PuppeteerYoutubeSubtitlesService],
   controllers: [ExtractionController],
 })

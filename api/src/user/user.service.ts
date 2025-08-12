@@ -20,20 +20,35 @@ export class UserService {
         firstName: profile.firstName,
         lastName: profile.lastName,
         picture: profile.picture,
-        loginToken: this.generateLoginToken(),
       });
 
+      user = await this.userRepository.save(user);
+
+      // Now generate loginToken with userId and update DB
+      user.loginToken = this.generateLoginToken(Number(user.id));
       await this.userRepository.save(user);
+
     } else {
       // Optionally update token on each login
-      user.loginToken = this.generateLoginToken();
+      user.loginToken = this.generateLoginToken(Number(user.id));
       await this.userRepository.save(user);
     }
 
     return user;
   }
 
-  private generateLoginToken(): string {
-    return randomBytes(32).toString('hex');
+  async findUserById(id: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  private generateLoginToken(userId: number): string {
+    const expiresInMs = 1000 * 60 * 60 * 24; // 24 hours expiry
+    const expiresAt = Date.now() + expiresInMs;
+
+    const payload = JSON.stringify({ userId, expiresAt });
+    const random = randomBytes(16).toString('hex');
+
+    const token = Buffer.from(`${payload}:${random}`).toString('base64');
+    return token;
   }
 }

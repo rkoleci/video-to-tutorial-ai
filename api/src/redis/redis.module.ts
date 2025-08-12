@@ -5,15 +5,15 @@ import { RedisService } from './redis.service';
 export const RedisProvider = {
   provide: 'REDIS_CLIENT',
   useFactory: async () => {
-    const redis = new Redis({
-      host: 'localhost',  
-      port: 6379,
-    });
+    // const redis = new Redis({
+    //   host: 'localhost',  
+    //   port: 6379,
+    // });
 
-    redis.on('connect', () => console.log('Redis connected'));
-    redis.on('error', (err) => console.error('Redis error', err));
+    // redis.on('connect', () => console.log('Redis connected'));
+    // redis.on('error', (err) => console.error('Redis error', err));
 
-    return redis;
+    return null;
   },
 };
 
