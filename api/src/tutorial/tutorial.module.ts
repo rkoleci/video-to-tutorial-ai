@@ -7,7 +7,7 @@ import { MyRedisModule } from 'src/redis/redis.module';
 import { RabbitMqModule } from 'src/rabbitmq/rabbitmq.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Tutorial]), MyRedisModule, RabbitMqModule ],
+  imports: [TypeOrmModule.forFeature([Tutorial]), MyRedisModule, RabbitMqModule,  ],
   providers: [TutorialService,],
   controllers: [TutorialController],
 })

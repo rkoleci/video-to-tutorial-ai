@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
 import { RabbitMqService } from './rabbitmq.service';
+import { Jwt } from 'src/auth/jwt.guard';
 
 @Controller('rabbitmq')
+  @UseGuards(Jwt)
 export class RabbitMqkController {
   constructor(private readonly rmqService: RabbitMqService) {}
 

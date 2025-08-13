@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, UseGuards } from '@nestjs/common';
 import TutorialService from './tutorial.service';
 import { StatusEnum, Tutorial } from './tutorial.entity';
+import { Jwt } from 'src/auth/jwt.guard';
 
 @Controller('tutorials')
+   @UseGuards(Jwt)
 export default class TutorialController {
   constructor(private readonly tutorialService: TutorialService) {}
+
 
   @Get()
   async findAll(): Promise<Tutorial[]> {

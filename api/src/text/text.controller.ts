@@ -7,10 +7,13 @@ import {
   Put,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import ExtractionService from './text.service';
+import { Jwt } from 'src/auth/jwt.guard';
 
 @Controller('text')
+  @UseGuards(Jwt)
 export class TextController {
   constructor(private readonly service: ExtractionService) {}
 

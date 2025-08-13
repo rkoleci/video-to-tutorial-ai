@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import {exec} from 'youtube-dl-exec';
 import * as path from 'path';
 import * as fs from 'fs';
+import { YoutubeTranscript } from 'youtube-transcript';
+import AIService from 'src/ai/ai.service';
 
 @Injectable()
 export default class ExtractionService {
@@ -10,7 +12,7 @@ export default class ExtractionService {
   private readonly audioPath = path.resolve('./downloads/audio');
   private readonly videoPath = path.resolve('./downloads/video');
 
-  constructor() {
+  constructor(private readonly AiService: AIService) {
     // Ensure download directories exist
     if (!fs.existsSync(this.audioPath)) {
       fs.mkdirSync(this.audioPath, { recursive: true });
@@ -26,7 +28,10 @@ export default class ExtractionService {
    * @param output optional filename (without path)
    */
   async downloadAudio(url: string, output?: string): Promise<string> {
-    try {
+ 
+      this.AiService.transcribeAudioDetailed('C:\\Users\\r.koleci\\Documents\\video-to-tuts-ai\\api\\audio\\podcast.mp3')
+      return ''
+    try { 
       // Step 1: Get video info
       this.logger.log(`Fetching video info for ${url}`);
       const videoInfo = await exec(url, { dumpSingleJson: true });
@@ -47,6 +52,7 @@ export default class ExtractionService {
       });
 
       this.logger.log(`Audio downloaded successfully: ${outputFilePath}`);
+
       return outputFilePath;
     } catch (error) {
       this.logger.error(`Failed to download audio: ${error.message}`, error.stack);
@@ -85,4 +91,61 @@ export default class ExtractionService {
       throw error;
     }
   }
+
+  async downloadSubtitles(url: string, lang = 'en', output?: string): Promise<string | null> {
+
+   try {
+     const subtitles = await YoutubeTranscript.fetchTranscript(url, {
+        lang:   'en',
+      });
+      console.log(111, 'subtitles', subtitles)
+   } catch (error) {
+ this.logger.error(`Failed to download subtitles: ${error.message}`, error.stack);
+    throw error;
+   }
+  try {
+    const subtitlesPath = path.resolve('./downloads/subtitles');
+
+    if (!fs.existsSync(subtitlesPath)) {
+      fs.mkdirSync(subtitlesPath, { recursive: true });
+    }
+
+    // Step 1: Get video info and check for subtitles
+    this.logger.log(`Fetching video info for subtitles from ${url}`);
+    const videoInfo: any = await exec(url, { dumpSingleJson: true });
+   
+    // Check if subtitles exist for requested language
+    if (
+      !videoInfo.subtitles || 
+      !videoInfo.subtitles[lang] ||
+      videoInfo.subtitles[lang].length === 0
+    ) {
+      this.logger.warn(`No subtitles found for language '${lang}'`);
+      return null;
+    }
+
+    // Determine output file name
+    const videoTitle = videoInfo.fulltitle.replace(/[^\w\s]/gi, '').trim();
+    const outputFileName = output || `${videoTitle}.${lang}.vtt`;
+    const outputFilePath = path.resolve(subtitlesPath, outputFileName);
+
+    this.logger.log(`Downloading subtitles to ${outputFilePath}`);
+
+    // Step 2: Download subtitles only, no video/audio
+    await exec(url, {
+      skipDownload: true,
+      writeSub: true,
+      subLang: lang,
+      subFormat: 'vtt',
+      output: path.resolve(subtitlesPath, `${videoTitle}.%(ext)s`),
+    });
+
+    this.logger.log(`Subtitles downloaded successfully: ${outputFilePath}`);
+
+    return outputFilePath;
+  } catch (error) {
+    this.logger.error(`Failed to download subtitles: ${error.message}`, error.stack);
+    throw error;
+  }
+}
 }
