@@ -20,13 +20,12 @@ export default class AIService {
     
     this.openai = openai;
 
-    const openAiWhisper = new OpenAI({
+     const openAiWhisper = new OpenAI({
       baseURL: this.configService.get('OPEN_AI_AUDIO_TRANSCRIPTIONS_URL'),
       apiKey: this.configService.get('OPEN_AI_API_KEY'),
     });
     
-
-    this.openAiWhisper = openAiWhisper
+    this.openAiWhisper = openAiWhisper;
   }
 
   async completion(): Promise<string> {

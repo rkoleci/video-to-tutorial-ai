@@ -12,8 +12,8 @@ import { ExtractionModule } from './extraction/extraction.module';
 import { FileModule } from './file/file.module';
 import { TextModule } from './text/text.module';
 import { AuthModule } from './auth/auth.module';
+import { MyRedisModule } from './redis/redis.module';
 import { AIModule } from './ai/ai.module';
-// import { MyRedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -55,7 +55,7 @@ import { AIModule } from './ai/ai.module';
     FileModule,
     TextModule,
     AuthModule,
-    // MyRedisModule
+    MyRedisModule,
     AIModule
     ], 
   controllers: [AppController],
