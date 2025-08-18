@@ -12,6 +12,8 @@ import { ExtractionModule } from './extraction/extraction.module';
 import { FileModule } from './file/file.module';
 import { TextModule } from './text/text.module';
 import { AuthModule } from './auth/auth.module';
+import YoutubeService from './core/youtube.service';
+import { CoreModule } from './core/core.module';
 // import { MyRedisModule } from './redis/redis.module';
 
 @Module({
@@ -54,6 +56,7 @@ import { AuthModule } from './auth/auth.module';
     FileModule,
     TextModule,
     AuthModule,
+    CoreModule
     // MyRedisModule
     ], 
   controllers: [AppController],

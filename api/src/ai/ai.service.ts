@@ -2,35 +2,34 @@ import { Injectable, Logger, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import * as fs from 'fs';
-import { Jwt } from 'src/auth/jwt.guard';
 
 @Injectable()
-   @UseGuards(Jwt)
 
 export default class AIService {
   private readonly logger = new Logger(AIService.name);
-  private openai: OpenAI;
-  private openAiWhisper: OpenAI;
+  private openAI: OpenAI;
 
   constructor(private configService: ConfigService) {
-    const openai = new OpenAI({
-      baseURL: this.configService.get('DEEPSEEK_API_URL'),
-      apiKey: this.configService.get('DEEPSEEK_API_KEY'),
-    });
-    
-    this.openai = openai;
-
-    const openAiWhisper = new OpenAI({
-      baseURL: this.configService.get('DEEPSEEK_API_URL'),
-      apiKey: this.configService.get('DEEPSEEK_API_KEY'),
+    const openAI = new OpenAI({
+      baseURL: this.configService.get('OPENAI_API_URL'),
+      apiKey: this.configService.get('OPENAI_API_KEY'),
     });
 
-    this.openAiWhisper = openAiWhisper
+    this.openAI = openAI
   }
 
-  async completion(): Promise<string> {
-    const completion = await this.openai.chat.completions.create({
-      messages: [{ role: 'system', content: 'You are a helpful assistant.' }],
+  public async completeTextPrompt(content: string) {
+    return this.completion(content)
+  }
+
+  public async speechToTextAI(audioFilePath: string, language: string) {
+    return this.transcribeAudioDetailed(audioFilePath, language)
+  }
+
+
+  private async completion(content: string): Promise<string> {
+    const completion = await this.openAI.chat.completions.create({
+      messages: [{ role: 'system', content }],
       model: 'deepseek-chat',
     });
 
@@ -39,7 +38,7 @@ export default class AIService {
     return completion.choices[0].message.content || '';
   }
 
-   async transcribeAudioDetailed(
+  private async transcribeAudioDetailed(
     audioFilePath: string,
     language?: string
   ): Promise<OpenAI.Audio.Transcription> {
@@ -50,7 +49,7 @@ export default class AIService {
         throw new Error(`Audio file not found: ${audioFilePath}`);
       }
 
-      const transcription = await this.openai.audio.transcriptions.create({
+      const transcription = await this.openAI.audio.transcriptions.create({
         file: fs.createReadStream(audioFilePath),
         model: 'whisper-1',
         language: language,
