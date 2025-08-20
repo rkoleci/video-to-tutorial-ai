@@ -3,7 +3,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './routes/protected-route';
 import { AuthCallbackPage } from './routes/auth-callback-route';
 
-const HomePage = () => { return <></>}
+const HomePage = () => { return <><h1 className="text-lg font-thin underline">
+  Hello world!
+</h1></>}
 const LoginPage = () => { return <></>}
 const DashboardPage = () => { return <></>}
 
