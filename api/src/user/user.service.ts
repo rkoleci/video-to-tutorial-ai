@@ -41,7 +41,7 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  private generateLoginToken(userId: number): string {
+   generateLoginToken(userId: number): string {
     const expiresInMs = 1000 * 60 * 60 * 24; // 24 hours expiry
     const expiresAt = Date.now() + expiresInMs;
 

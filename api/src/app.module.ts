@@ -48,8 +48,7 @@ import { CoreModule } from './core/core.module';
     }),
     
     
-
-    // Add your other feature modules here
+ 
     TutorialModule,
     // RabbitMqModule,
     ExtractionModule,
@@ -66,4 +65,4 @@ import { CoreModule } from './core/core.module';
 })
 export class AppModule {}
 
-// next, setup multiole nodejs cosnumers, load testing
+ 

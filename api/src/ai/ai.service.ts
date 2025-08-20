@@ -12,7 +12,7 @@ export default class AIService {
   constructor(private configService: ConfigService) {
     const openAI = new OpenAI({
       baseURL: this.configService.get('OPENAI_API_URL'),
-      apiKey: this.configService.get('OPENAI_API_KEY'),
+      apiKey: this.configService.get('OPEN_AI_API_KEY'),
     });
 
     this.openAI = openAI

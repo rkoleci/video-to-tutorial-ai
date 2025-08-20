@@ -22,7 +22,7 @@ export default class YoutubeService {
 
 
 
-    async downloadAudio(url: string, output?: string): Promise<string> {
+    async downloadAudio(url: string, output?: string): Promise<void> {
 
         try {
             // Step 1: Get video info
@@ -45,7 +45,7 @@ export default class YoutubeService {
             });
 
             this.logger.log(`Audio downloaded successfully: ${outputFilePath}`);
-            return outputFilePath;
+            // return outputFilePath;
         } catch (error) {
             this.logger.error(`Failed to download audio: ${error.message}`, error.stack);
             throw error;

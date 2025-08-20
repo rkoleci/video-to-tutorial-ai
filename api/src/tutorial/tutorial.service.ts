@@ -70,6 +70,8 @@ export default class TutorialService {
   async create(tutorial: Partial<Tutorial>): Promise<Tutorial> {
     const newTutorial = this.tutorialRepository.create(tutorial);
     newTutorial.status = StatusEnum.PROCESSING;
+    newTutorial.title = ''
+    newTutorial.tutorial = ''
     const savedTutorial = await this.tutorialRepository.save(newTutorial);
 
     try {
@@ -83,7 +85,7 @@ export default class TutorialService {
     }
 
     console.log(111, String(savedTutorial.id))
-    this.queueService.publishMessage(RabbitMQueueNames.Q_DOWNLOAD_VIDEO, String(savedTutorial.id))
+    this.queueService.publishMessage(RabbitMQueueNames.Q_DOWNLOAD_VIDEO, String(savedTutorial.id)) // TODO maybe pass videoId
 
     return savedTutorial;
   }
@@ -128,5 +130,30 @@ export default class TutorialService {
     }
 
     return savedTutorial;
+  }
+
+  async findUserTutorials(userId: string): Promise<Tutorial[]> {
+    try {
+      const cachedTutorials = await this.redisService.hgetall(this.CACHE_KEY);
+
+      if (Object.keys(cachedTutorials).length > 0) {
+        console.log('Serving tutorials from Redis cache');
+        return Object.values(cachedTutorials).map((t) => JSON.parse(t)); // TODO: add user where
+      }
+
+      console.log('Fetching tutorials from database');
+      const tutorials = await this.tutorialRepository.find(); // TODO: add user where
+
+      const pipeline = this.redisService.pipeline();
+      tutorials.forEach((tutorial) => {
+        pipeline.hset(this.CACHE_KEY, tutorial.id.toString(), JSON.stringify(tutorial));
+      });
+      await pipeline.exec();
+
+      return tutorials;
+    } catch (error) {
+      console.error('Redis error, falling back to database:', error);
+      return this.tutorialRepository.find();
+    }
   }
 }
