@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "./navbar";
 import Sidebar from "./sidebar";
+import WelcomeHeader from "./welcome-header";
 
 interface IProps {
     children: React.ReactNode
@@ -14,7 +15,7 @@ export default function AppContainer({ children }: IProps) {
     };
 
     return (
-        <div className="h-screen flex flex-col bg-[#f6f8ff] w-full"> 
+        <div className="h-screen flex flex-col bg-[#f6f8ff] w-full">
             <div className="flex-none">
                 <Navbar onSearch={onSearch} />
             </div>
@@ -32,7 +33,7 @@ export default function AppContainer({ children }: IProps) {
 
                 {/* Overlay for mobile when sidebar is open */}
                 {isSidebarOpen && (
-                    <div 
+                    <div
                         className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
                         onClick={() => setIsSidebarOpen(false)}
                     />
@@ -40,10 +41,15 @@ export default function AppContainer({ children }: IProps) {
 
                 {/* Main content - Scrollable */}
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    <main className="flex-1 overflow-y-auto p-12 sm:p-14 lg:p-16 ">
-                        {children}
+                    <main className="flex-1 overflow-y-auto  sm:pt-10 lg:pt-10 px-32   ">
+                        <WelcomeHeader />
+                        <div className="min-h-screen" >
+                            {children}
+                        </div>
                     </main>
                 </div>
+
+              
             </div>
         </div>
     );

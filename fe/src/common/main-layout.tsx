@@ -2,10 +2,16 @@
 import AppContainer from '../common/app-container';
 import { Outlet } from 'react-router-dom';
 
-export default function MainLayout() {
+interface IProps {
+  children?: React.ReactNode;
+}
+
+export default function MainLayout({}: IProps) {
   return (
-    <AppContainer>
+     <AppContainer>
       <Outlet />
+
+ 
     </AppContainer>
   );
 }
