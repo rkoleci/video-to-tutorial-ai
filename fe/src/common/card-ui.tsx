@@ -7,6 +7,7 @@ interface TutorialCardProps {
   status: string;
   createdAt: string;
   imageUrl: string;
+  onClick: () => void;
 }
 // TODO `https://img.youtube.com/vi/${videoId}/${quality}.jpg`
 export default function TutorialCard({
@@ -16,9 +17,11 @@ export default function TutorialCard({
   status,
   createdAt,
   imageUrl,
+  onClick
 }: TutorialCardProps) {
+
   return (
-    <div className="flex justify-between items-start p-4 bg-white border border-gray-300 rounded-2xl shadow-sm max-w-2xl w-full relative">
+    <div onClick={onClick} className="cursor-pointer hover:bg-gray-100 flex justify-between items-start p-4 bg-white border border-gray-300 rounded-2xl shadow-sm max-w-2xl w-full relative">
       {/* Top-right menu */}
       <div className="absolute top-2 right-2 text-gray-400 text-xl">⋯</div>
 

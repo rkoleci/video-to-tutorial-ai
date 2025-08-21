@@ -18,18 +18,10 @@ export default function Navbar({ onSearch }: NavbarProps) {
     if (e.key === 'Enter') {
       handleSearch();
     }
-  };
-
-  // Get current date
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
-
+  }; 
+  
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+    <nav className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 relative">
       <div className="flex items-center flex-start ">
         {/* Left side - Title */}
         <div className="flex items-center w-64">
@@ -50,7 +42,7 @@ export default function Navbar({ onSearch }: NavbarProps) {
               placeholder="Paste youtube video url here..."
               className="w-full pl-4 pr-16 py-2 bg-white text-gray-600 placeholder-gray-400 focus:outline-none border-0"
             />
-            
+
             <div
               onClick={handleSearch}
               className="absolute right-1 top-1 bottom-1 px-4 bg-red-400 hover:bg-red-500 text-white cursor-pointer rounded-lg transition-colors duration-200 flex items-center justify-center"
@@ -59,8 +51,11 @@ export default function Navbar({ onSearch }: NavbarProps) {
             </div>
           </div>
         </div>
- 
-      
+
+        <div className="hidden lg:block absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 text-sm font-light select-none">
+          Created by: Rei Koleci
+        </div>
+
       </div>
     </nav>
   );

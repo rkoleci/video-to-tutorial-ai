@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "./navbar";
 import Sidebar from "./sidebar";
 import WelcomeHeader from "./welcome-header";
+import { useAuth } from "../hooks/useAuth";
 
 interface IProps {
     children: React.ReactNode
@@ -9,6 +10,7 @@ interface IProps {
 
 export default function AppContainer({ children }: IProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { isAuthed} = useAuth()
 
     const onSearch = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -23,13 +25,15 @@ export default function AppContainer({ children }: IProps) {
             {/* Main content area */}
             <div className="flex flex-1 overflow-hidden ">
                 {/* Sidebar - Hidden on mobile, shown as overlay when hamburger clicked */}
-                <div className={`
+               {isAuthed && (
+                 <div className={`
                     fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out
                     lg:relative lg:translate-x-0 lg:flex lg:flex-shrink-0  
                     ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
                 `}>
                     <Sidebar onClose={() => setIsSidebarOpen(false)} />
                 </div>
+               )}
 
                 {/* Overlay for mobile when sidebar is open */}
                 {isSidebarOpen && (

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
 import TutorialCard from './card-ui';
+import { useNavigate } from 'react-router-dom';
 
-interface Tutorial {
+export interface Tutorial {
   title: string;
   description: string;
   priority: string;
@@ -11,24 +12,7 @@ interface Tutorial {
   imageUrl: string;
 }
 
-const tutorials: Tutorial[] = [
-  {
-    title: "Attend Nischal’s Birthday Party",
-    description: "Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements)",
-    priority: "Moderate",
-    status: "Not Started",
-    createdAt: "20/06/2023",
-    imageUrl: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=400&q=60",
-  },
-  {
-    title: "Attend Nischal’s Birthday Party",
-    description: "Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements)",
-    priority: "Moderate",
-    status: "Not Started",
-    createdAt: "20/06/2023",
-    imageUrl: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=400&q=60",
-  },
-];
+
 
 // Skeleton version of TutorialCard
 function TutorialCardSkeleton() {
@@ -46,8 +30,14 @@ function TutorialCardSkeleton() {
   );
 }
 
-export default function TutorialGrid() {
+interface IProps {
+  tutorials: Tutorial[],
+  skeleton?: number
+}
+
+export default function TutorialGrid({ tutorials, skeleton = 3 }: IProps) {
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate()
 
   // Simulate data loading (replace with real fetch logic)
   useEffect(() => {
@@ -57,11 +47,15 @@ export default function TutorialGrid() {
 
   const isEmpty = tutorials.length === 0;
 
+  const onClick = (id: string) => {
+    navigate(`/home?id=${id}`)
+  }
+
   return (
-    <div className="px-4 py-4 min-h-[70vh]">
+    <div className="px-4 py-4 min-h-[20vh]">
       {loading ? (
         <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(skeleton)].map((_, i) => (
             <TutorialCardSkeleton key={i} />
           ))}
         </div>
@@ -80,7 +74,7 @@ export default function TutorialGrid() {
           }`}
         >
           {tutorials.map((tutorial, index) => (
-            <TutorialCard key={index} {...tutorial} />
+            <TutorialCard key={index} {...tutorial} onClick={() => onClick('1234')} />
           ))}
         </div>
       )}
