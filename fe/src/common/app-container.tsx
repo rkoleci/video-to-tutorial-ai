@@ -14,7 +14,7 @@ export default function AppContainer({ children }: IProps) {
     };
 
     return (
-        <div className="h-screen flex flex-col bg-red w-full"> 
+        <div className="h-screen flex flex-col bg-[#f6f8ff] w-full"> 
             <div className="flex-none">
                 <Navbar onMenuClick={toggleSidebar} />
             </div>

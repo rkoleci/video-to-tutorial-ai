@@ -1,49 +1,67 @@
-import { Search, Bell, Calendar, UserPlus, Menu } from 'lucide-react';
+import { Search, Bell, Calendar } from 'lucide-react';
+import { useState } from 'react';
 
 interface NavbarProps {
-  onMenuClick?: () => void;
+  onSearch?: (query: string) => void;
 }
 
-export default function Navbar({ onMenuClick }: NavbarProps) {
+export default function Navbar({ onSearch }: NavbarProps) {
+  const [query, setQuery] = useState('');
+
+  const handleSearch = () => {
+    if (onSearch) {
+      onSearch(query);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  // Get current date
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+
   return (
-    <nav className="w-full bg-white shadow-sm border-b border-gray-200">
-      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-start h-16">
-          {/* Hamburger Menu Button (Mobile Only) + Logo */}
-          <div className="flex items-center space-x-4    bg-red-400  ">
-            {/* Hamburger menu button for mobile */} 
-            <button
-              onClick={onMenuClick}
-              className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+    <nav className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+      <div className="flex items-center flex-start ">
+        {/* Left side - Title */}
+        <div className="flex items-center w-64">
+          <h5 className="text-2xl font-bold">
+            <span className="text-red-400">Dash</span>
+            <span className="text-gray-800">board</span>
+          </h5>
+        </div>
+
+        {/* Center - Search Input */}
+        <div className="flex-1 max-w-2xl mx-8 ps-8">
+          <div className="relative flex items-center border-2 border-blue-400 rounded-xl overflow-hidden shadow-xl">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Paste youtube video url here..."
+              className="w-full pl-4 pr-16 py-2 bg-white text-gray-600 placeholder-gray-400 focus:outline-none border-0"
+            />
+            
+            <div
+              onClick={handleSearch}
+              className="absolute right-1 top-1 bottom-1 px-4 bg-red-400 hover:bg-red-500 text-white cursor-pointer rounded-lg transition-colors duration-200 flex items-center justify-center"
             >
-              <Menu className="h-6 w-6" />
-            </button>
- 
-          </div>
-
-          <div className='w-64 bg-white hidden lg:block'>
-           <p className='text-black'> Dashboard</p>
-          </div>
-
-          {/* Search Bar - Full width on mobile, centered on desktop */}
-          <div className="flex-1 md:flex-none md:w-96 mx-4 md:mx-8">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search your task here..."
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-red-400 focus:border-red-400 sm:text-sm"
-              />
+              <Search className="h-5 w-5" />
             </div>
           </div>
-
-        
         </div>
+ 
+      
       </div>
-
-     
     </nav>
   );
 }
