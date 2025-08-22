@@ -1,6 +1,7 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
+import { Jwt } from './jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -29,12 +30,9 @@ export class AuthController {
 
 
   @Get('me')
-  @UseGuards(AuthGuard('google'))
-  async me(@Req() req, @Res() res: any) {
-    // Here req.user is set by the strategy
-    
- /// TODO
-    // decode token, get user Id
-    // reutrn user where token 
+  @UseGuards(Jwt)
+  async me(@Req() req,) {
+    console.log(111, '/me', req.user)
+    return req.user
   }
 }

@@ -1,5 +1,6 @@
 import { Search, Bell, Menu } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface NavbarProps {
   onSearch?: (query: string) => void;
@@ -8,6 +9,7 @@ interface NavbarProps {
 
 export default function Navbar({ onSearch, onMenuItemClick }: NavbarProps) {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate()
 
   const handleSearch = () => {
     if (onSearch) {
@@ -32,7 +34,7 @@ export default function Navbar({ onSearch, onMenuItemClick }: NavbarProps) {
           >
             <Menu className="h-6 w-6 text-gray-600" />
           </button>
-          <h5 className="text-2xl font-bold hidden lg:block">
+          <h5 className="text-2xl font-bold hidden lg:block cursor:pointer" onClick={() => navigate('/')}>
             <span className="text-red-400">Dash</span>
             <span className="text-gray-800">board</span>
           </h5>

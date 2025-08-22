@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Inject } from '@nestjs/common';
 import { Request } from 'express';
-import { UserService } from 'src/user/user.service';
+import { TokenPayload, UserService } from 'src/user/user.service';
 
 @Injectable()
 export class Jwt implements CanActivate {
@@ -13,23 +13,27 @@ export class Jwt implements CanActivate {
     if (!token) {
       throw new UnauthorizedException('No authorization token provided');
     }
-
+    console.log(111, { token })
     // Decode token
-    let decoded: { userId: number; expiresAt: number };
-    try {
-      const decodedStr = Buffer.from(token, 'base64').toString('utf8');
-      const [payloadStr] = decodedStr.split(':');
-      decoded = JSON.parse(payloadStr);
-    } catch {
-      throw new UnauthorizedException('Invalid token format');
-    }
+    let decoded: TokenPayload | null = await this.userService.decryptLoginToken(token)
+    // if (!decoded) {
+    //   throw new UnauthorizedException('Invalid token format');
+    // }
 
-    if (Date.now() > decoded.expiresAt) {
+   
+
+    if (decoded && Date.now() > decoded.expiresAt) {
       throw new UnauthorizedException('Token expired');
     }
 
     // Verify token matches DB loginToken for userId
-    const user = await this.userService.findUserById(String(decoded.userId));
+    const payload: TokenPayload | null = decoded
+    if (!payload) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    console.log(111, payload)
+    const user = await this.userService.findUserById(payload.userId);
 
     if (!user || user.loginToken !== token) {
       throw new UnauthorizedException('Invalid token');
