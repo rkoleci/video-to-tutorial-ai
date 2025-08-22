@@ -4,7 +4,7 @@ import { StatusEnum, Tutorial } from './tutorial.entity';
 import { Jwt } from 'src/auth/jwt.guard';
 
 @Controller('tutorials')
-// @UseGuards(Jwt)
+@UseGuards(Jwt)
 export default class TutorialController {
   constructor(private readonly tutorialService: TutorialService) { }
 
@@ -21,8 +21,10 @@ export default class TutorialController {
 
   // Client calls this to start the processs
   @Post()
-  async create(@Body() tutorial: Partial<Tutorial>): Promise<Tutorial> {
-    return this.tutorialService.create(tutorial);
+  async create(@Body() tutorial: Partial<Tutorial>, @Req() req: any): Promise<Tutorial> {
+    const user = req.user;
+    console.log(111, 'POST', user)
+    return this.tutorialService.create(tutorial, user?.id);
   }
 
   @Put(':id')

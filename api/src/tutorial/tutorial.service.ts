@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { StatusEnum, Tutorial } from './tutorial.entity';
 import { QueueService, RabbitMQueueNames } from 'src/rabbitmq/queue.service';
 import { RedisService } from 'src/redis/redis.service';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export default class TutorialService {
@@ -67,11 +68,12 @@ export default class TutorialService {
     }
   }
 
-  async create(tutorial: Partial<Tutorial>): Promise<Tutorial> {
+  async create(tutorial: Partial<Tutorial>, userId: string): Promise<Tutorial> {
     const newTutorial = this.tutorialRepository.create(tutorial);
     newTutorial.status = StatusEnum.PROCESSING;
     newTutorial.title = ''
     newTutorial.tutorial = ''
+    newTutorial.userId = userId;
     const savedTutorial = await this.tutorialRepository.save(newTutorial);
 
     try {

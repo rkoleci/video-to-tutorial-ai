@@ -1,32 +1,20 @@
 import { Tutorial } from 'src/tutorial/tutorial.entity';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
-@Entity('users')
-export class User {
+@Entity('usage')
+export class Usage {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ unique: true })
-  email: string;
+  ip: string;
 
   @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
-  @Column({ nullable: true })
-  picture: string;
-
-  @Column({ unique: true })
-  loginToken: string; 
+  hits: number;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @OneToMany(() => Tutorial, (tutorial) => tutorial.user, { cascade: true })
-  tutorials: Tutorial[];
 }

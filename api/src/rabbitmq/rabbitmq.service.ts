@@ -18,16 +18,16 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
   constructor(public configService: ConfigService) {}
 
   async onModuleInit() {
-    // try {
-    //   this.connection = await connect(
-    //     `amqp://${this.configService.get('RBMQ_USER')}:${this.configService.get('RMBQ_PASSWORD')}@localhost:${this.configService.get('RBMQ_PORT')}`,
-    //   );
-    //   this.channel = await this.connection.createChannel();
-    //   console.log('✅ RabbitMQ connected and channel created');
-    // } catch (error) {
-    //   console.error('❌ Failed to connect to RabbitMQ:', error);
-    //   throw error;
-    // }
+    try {
+      this.connection = await connect(
+        `amqp://${this.configService.get('RBMQ_USER')}:${this.configService.get('RMBQ_PASSWORD')}@localhost:${this.configService.get('RBMQ_PORT')}`,
+      );
+      this.channel = await this.connection.createChannel();
+      console.log('✅ RabbitMQ connected and channel created');
+    } catch (error) {
+      console.error('❌ Failed to connect to RabbitMQ:', error);
+      throw error;
+    }
   }
 
   async publishMessage(
