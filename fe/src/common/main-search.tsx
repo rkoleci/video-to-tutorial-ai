@@ -29,7 +29,7 @@ export default function MainSearch({ }: IProps) {
   return (
     <div className="p-4 w-full  bg-white rounded-xl shadow-md border flex flex-col ">
       <div className="w-full  flex   items-center justify-center  min-h-[20vh]">
-        <div className="flex-1 max-w-2xl mx-8 ps-8">
+        <div className="flex-1 w-full md:max-w-2xl mx-8 md:ps-8">
           <div className="relative flex items-center border-2 border-blue-400 rounded-xl overflow-hidden shadow-xl">
             <input
               type="text"
@@ -37,7 +37,7 @@ export default function MainSearch({ }: IProps) {
               onChange={(e) => setQuery(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Paste youtube video url here..."
-              className="w-full pl-4 pr-16 py-2 bg-white text-gray-600 placeholder-gray-400 focus:outline-none border-0"
+              className="w-full pl-4 pr-16 py-2 md:py-4 bg-white text-gray-600 placeholder-gray-400 focus:outline-none border-0"
             />
 
             <div

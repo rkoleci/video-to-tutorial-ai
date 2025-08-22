@@ -1,11 +1,12 @@
-import { Search, Bell, Calendar } from 'lucide-react';
+import { Search, Bell, Menu } from 'lucide-react';
 import { useState } from 'react';
 
 interface NavbarProps {
   onSearch?: (query: string) => void;
+  onMenuItemClick: () => void;
 }
 
-export default function Navbar({ onSearch }: NavbarProps) {
+export default function Navbar({ onSearch, onMenuItemClick }: NavbarProps) {
   const [query, setQuery] = useState('');
 
   const handleSearch = () => {
@@ -18,14 +19,20 @@ export default function Navbar({ onSearch }: NavbarProps) {
     if (e.key === 'Enter') {
       handleSearch();
     }
-  }; 
-  
+  };
+
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 relative">
       <div className="flex items-center flex-start ">
         {/* Left side - Title */}
-        <div className="flex items-center w-64">
-          <h5 className="text-2xl font-bold">
+        <div className="flex items-center w-4 md:w-64">
+        <button 
+            onClick={onMenuItemClick} 
+            className="block lg:hidden mr-3 p-2 hover:bg-gray-100 rounded-md transition-colors duration-200"
+          >
+            <Menu className="h-6 w-6 text-gray-600" />
+          </button>
+          <h5 className="text-2xl font-bold hidden lg:block">
             <span className="text-red-400">Dash</span>
             <span className="text-gray-800">board</span>
           </h5>

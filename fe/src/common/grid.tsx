@@ -38,6 +38,7 @@ interface IProps {
 export default function TutorialGrid({ tutorials, skeleton = 3 }: IProps) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate()
+  console.log(1111, { tutorials})
 
   // Simulate data loading (replace with real fetch logic)
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function TutorialGrid({ tutorials, skeleton = 3 }: IProps) {
           className={`grid gap-6 ${
             tutorials.length === 1
               ? 'grid-cols-1'
-              : 'grid-cols-1 md:grid-cols-3'
+              : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
           }`}
         >
           {tutorials.map((tutorial, index) => (

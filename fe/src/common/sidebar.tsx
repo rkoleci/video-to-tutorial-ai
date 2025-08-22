@@ -42,7 +42,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
   ]
 
   return (
-    <div className="pt-10 bg-[#f6f8ff] ">
+    <div className="pt-10 bg-[#f6f8ff] h-full">
       <div className="flex flex-col h-full w-80 bg-[#ff6767] text-white relative rounded-r-2xl">
         {/* Close button for mobile */}
         <div className="flex items-center justify-between p-4 lg:hidden">

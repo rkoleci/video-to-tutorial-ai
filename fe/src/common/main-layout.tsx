@@ -6,12 +6,11 @@ interface IProps {
   children?: React.ReactNode;
 }
 
-export default function MainLayout({}: IProps) {
+export default function MainLayout({ children }: IProps) {
   return (
      <AppContainer>
       <Outlet />
-
- 
+      {children}
     </AppContainer>
   );
 }
