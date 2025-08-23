@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 // Create axios instance with base configuration
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL || 'http://localhost:3000',
+  baseURL: import.meta.env.API_BASE_URL || 'http://localhost:3000',
   timeout: 10000, // 10 seconds timeout
   headers: {
     'Content-Type': 'application/json',

@@ -3,6 +3,8 @@ import Navbar from "./navbar";
 import Sidebar from "./sidebar";
 import WelcomeHeader from "./welcome-header";
 import { useAuth } from "../hooks/useAuth";
+import { useTutorialStore } from "../store/useTutorial";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
     children: React.ReactNode
@@ -11,9 +13,13 @@ interface IProps {
 export default function AppContainer({ children }: IProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { isAuthed} = useAuth()
+    const { createTutorial } = useTutorialStore()
+    const naviate = useNavigate()
 
-    const onSearch = () => {
-        setIsSidebarOpen(!isSidebarOpen);
+    const onSearch = (q: string) => {
+        createTutorial(q, (id: string) => {
+            naviate(`/home?id=${id}`)
+          })
     };
 
     const onMenuItemClick = () => {

@@ -9,7 +9,11 @@ import { useAuth } from './hooks/useAuth';
 import { useEffect } from 'react';
 import Home from './routes/home';
 
-const LoginPage = () => <div className="bg-red">Login page</div>;
+const LoginPage = () => {
+  const baseUrl = import.meta.env.API_BASE_URL || 'http://localhost:3000'
+  window.location.replace(`${baseUrl}/auth/google`);
+  return <></>
+};
 
 
 function App() {

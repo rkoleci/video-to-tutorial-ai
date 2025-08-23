@@ -2,6 +2,8 @@ import { Search } from "lucide-react";
 import React, { useState } from "react";
 import TutorialGrid from "./grid";
 import { useAuth } from "../hooks/useAuth";
+import { useTutorialStore } from "../store/useTutorial";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
 }
@@ -9,9 +11,13 @@ interface IProps {
 export default function MainSearch({ }: IProps) {
   const [query, setQuery] = useState('');
   const { isAuthed } = useAuth()
+  const { createTutorial } = useTutorialStore()
+  const naviate = useNavigate()
 
   const onSearch = (q: string) => {
-
+    createTutorial(q, (id: string) => {
+      naviate(`/home?id=${id}`)
+    })
   }
 
   const handleSearch = () => {

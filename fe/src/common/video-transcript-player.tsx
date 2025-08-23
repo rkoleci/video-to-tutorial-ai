@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useTutorialStore } from '../store/useTutorial';
 
 interface TranscriptSentence {
   time: number; // in seconds
