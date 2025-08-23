@@ -43,9 +43,10 @@ export default class TutorialController {
     return this.tutorialService.updateStatus(id, status);
   }
 
-  @Get("/user")
+  @Post("/user")
   async findUserTutorials(@Req() req: any): Promise<Tutorial[]> {
     const userId = req.user.id;
+    console.log(111, 'userId', userId)
     return this.tutorialService.findUserTutorials(userId);
   }
 }

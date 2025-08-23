@@ -18,9 +18,9 @@ export class UsageService {
         return record;
     }
 
-    async update(ip: string): Promise<Usage> {
+    async update(ip: string): Promise<Usage | null> {
 
-        const record: Usage = await this.usageRepo.findOneOrFail({ where: { ip } })
+        const record: Usage | null = await this.usageRepo.findOne({ where: { ip } })
 
         if (!record) {
             const usage = this.usageRepo.create({

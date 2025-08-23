@@ -15,6 +15,9 @@ export class RedisService {
   }
 
   async hgetall(key: string): Promise<Record<string, string>> {
+    if (!this.redisClient) {
+      throw new Error('Redis client is null!');
+    }
     return this.redisClient.hgetall(key);
   }
 

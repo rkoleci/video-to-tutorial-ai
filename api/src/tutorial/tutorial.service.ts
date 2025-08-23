@@ -137,14 +137,15 @@ export default class TutorialService {
   async findUserTutorials(userId: string): Promise<Tutorial[]> {
     try {
       const cachedTutorials = await this.redisService.hgetall(this.CACHE_KEY);
+      console.log(111, { cachedTutorials })
 
       if (Object.keys(cachedTutorials).length > 0) {
         console.log('Serving tutorials from Redis cache');
-        return Object.values(cachedTutorials).map((t) => JSON.parse(t)); // TODO: add user where
+        return Object.values(cachedTutorials).map((t) => JSON.parse(t))?.filter(t => t.userId == userId); // TODO: add user where
       }
 
       console.log('Fetching tutorials from database');
-      const tutorials = await this.tutorialRepository.find(); // TODO: add user where
+      const tutorials = await this.tutorialRepository.find({ where: { userId: userId }}); // TODO: add user where
 
       const pipeline = this.redisService.pipeline();
       tutorials.forEach((tutorial) => {
@@ -155,7 +156,11 @@ export default class TutorialService {
       return tutorials;
     } catch (error) {
       console.error('Redis error, falling back to database:', error);
-      return this.tutorialRepository.find();
+      return this.tutorialRepository.find({
+        where: {
+          userId
+        }
+      });
     }
   }
 }

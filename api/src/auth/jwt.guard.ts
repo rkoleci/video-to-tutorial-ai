@@ -13,7 +13,6 @@ export class Jwt implements CanActivate {
     if (!token) {
       throw new UnauthorizedException('No authorization token provided');
     }
-    console.log(111, { token })
     // Decode token
     let decoded: TokenPayload | null = await this.userService.decryptLoginToken(token)
     // if (!decoded) {
@@ -32,7 +31,6 @@ export class Jwt implements CanActivate {
       throw new UnauthorizedException('Invalid token');
     }
 
-    console.log(111, payload)
     const user = await this.userService.findUserById(payload.userId);
 
     if (!user || user.loginToken !== token) {

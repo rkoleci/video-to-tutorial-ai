@@ -20,25 +20,30 @@ export class UserService {
 
   async findOrCreate(profile: any): Promise<User> {
     let user = await this.userRepository.findOne({ where: { email: profile.email } });
-
+  
     if (!user) {
+      // First insert without token
       user = this.userRepository.create({
         email: profile.email,
         firstName: profile.firstName,
         lastName: profile.lastName,
         picture: profile.picture,
       });
-
+  
+      user = await this.userRepository.save(user); // now user.id is available
+  
+      // Generate token with user.id and update
+      user.loginToken = this.generateLoginToken(String(user.id));
+      user = await this.userRepository.save(user); // update with token
+    } else {
+      // Refresh token on login
+      user.loginToken = this.generateLoginToken(String(user.id));
       user = await this.userRepository.save(user);
     }
-
-    // (Re)issue a token on login
-    console.log(111, 'db user', user)
-    user.loginToken = this.generateLoginToken(String(user.id));
-    await this.userRepository.save(user);
-
+  
     return user;
   }
+  
 
   async findUserById(id: string): Promise<User | null> {
     // If your PK is numeric, casting avoids type mismatch issues.

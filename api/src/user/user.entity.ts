@@ -18,8 +18,8 @@ export class User {
   @Column({ nullable: true })
   picture: string;
 
-  @Column({ unique: true })
-  loginToken: string; 
+  @Column({ type: 'text', unique: true, nullable: true })
+  loginToken: string | null;
 
   @CreateDateColumn()
   createdAt: Date;
