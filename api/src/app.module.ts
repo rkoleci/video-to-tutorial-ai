@@ -34,7 +34,7 @@ import { UsageModule } from './usage/usage.module';
         password: process.env.DB_PASSWORD,
         database:  process.env.DB_NAME,
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+        // synchronize: true,
         logging: true ,
         // ssl: {
         //   rejectUnauthorized: tru,

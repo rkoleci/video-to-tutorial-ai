@@ -17,21 +17,21 @@ const entitiesPattern: string = join(
 );
 const migrationsPattern: string = join(
   process.cwd(),
-  'dist/migrations/main/*.js',
+  'src/migrations/*{.ts,.js}',
 );
  
 export default new DataSource({
     type: 'postgres',
     host: process.env.DB_HOST,
-    port: 5432,
+    port: Number(process.env.DB_PORT),
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [entitiesPattern],
+    entities: [entitiesPattern], 
     migrations: [migrationsPattern],
-    ssl: {
-      rejectUnauthorized: false
-    },
+    // ssl: {
+    //   rejectUnauthorized: false
+    // },
     synchronize: false,
     logging: true,
 logger: 'advanced-console'

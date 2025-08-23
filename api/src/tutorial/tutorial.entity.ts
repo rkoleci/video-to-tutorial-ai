@@ -44,5 +44,5 @@ export class Tutorial {
   user: User;
 
   @Column()
-  userId: string; 
+  userId: string;  
 }
