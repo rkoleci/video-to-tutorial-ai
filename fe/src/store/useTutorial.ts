@@ -8,7 +8,7 @@ interface TutorialState {
   errored: boolean;
 
   loadingMyTutorials: boolean;
-  myTutorials: Tutorial[] | null;
+  myTutorials: Tutorial[];
 
   loadingTutorial: boolean;
   currentTutorial: Tutorial | null;
@@ -29,7 +29,7 @@ export const useTutorialStore = create<TutorialState>((set, get) => ({
   errored: false,
 
   loadingMyTutorials: false,
-  myTutorials: null,
+  myTutorials: [],
 
   loadingTutorial: false,
   currentTutorial: null,

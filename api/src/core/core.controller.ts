@@ -22,7 +22,7 @@ export class CoreController {
             throw new Error('Video ID is required');
         }
 
-        this.ytService.downloadAudio(videoId);
+        await this.ytService.downloadAudio(videoId);
       
         return 'Audio extraction started' ;
     }

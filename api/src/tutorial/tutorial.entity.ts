@@ -44,5 +44,8 @@ export class Tutorial {
   user: User;
 
   @Column()
-  userId: string;  
+  userId: string; 
+
+  @Column({ type: 'text' })
+  videoDescription: string;
 }

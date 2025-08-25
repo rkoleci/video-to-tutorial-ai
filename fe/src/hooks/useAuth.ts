@@ -1,26 +1,37 @@
-// stores/useAuth.ts
 import { create } from "zustand";
-import apiClient from "../agent"; 
+import apiClient from "../agent";
+import type { User } from "../types";
 
 interface AuthState {
   isAuthed: boolean;
   loading: boolean;
   errored: boolean;
 
+  user: User | null;
+
   setIsAuthed: () => void,
   login: (credentials: { username: string; password: string }) => Promise<void>;
+  getMe: () => void;
   logout: () => Promise<void>;
   reset: () => void;
 }
 
-export const useAuth = create<AuthState>((set) => ({
+export const useAuth = create<AuthState>((set, get) => ({
   isAuthed: false,
   loading: false,
   errored: false,
 
+  user: null,
+
   setIsAuthed: () => {
     const token = localStorage.getItem('authToken')
     set({ isAuthed: !!token })
+
+    if (token) {
+      const { getMe } = get()
+      getMe()
+    }
+
   },
 
   login: async (credentials) => {
@@ -39,6 +50,23 @@ export const useAuth = create<AuthState>((set) => ({
     } catch (error) {
       console.error("Login error:", error);
       set({ isAuthed: false, loading: false, errored: true });
+    }
+  },
+
+  getMe: async () => {
+    set({ loading: true, errored: false });
+
+    try {
+      const response = await apiClient.get("/auth/me");
+
+      if (response.status === 200) {
+        set({ user: response.data });
+      } else {
+        set({ user: null });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      set({ user: null });
     }
   },
 

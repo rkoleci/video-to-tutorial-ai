@@ -22,6 +22,7 @@ function App() {
   useEffect(() => {
     setIsAuthed()
   }, [])
+
   return (
 
     <BrowserRouter>

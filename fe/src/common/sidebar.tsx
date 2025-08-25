@@ -1,6 +1,7 @@
 import { X, LayoutDashboard, AlertTriangle, CheckSquare, } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { capitalizeFirstLetter } from '../utils';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -9,7 +10,7 @@ interface SidebarProps {
 export default function Sidebar({ onClose }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthed } = useAuth()
+  const { isAuthed, user } = useAuth()
 
   if (!isAuthed) {
     return null
@@ -56,14 +57,14 @@ export default function Sidebar({ onClose }: SidebarProps) {
         <div className="flex flex-col items-center pt-8 pb-8 px-6 relative">
           <div className="w-24 h-24 rounded-full border-4 border-white overflow-hidden mb-6 absolute -top-8 bg-white shadow-lg">
             <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+              src={user?.picture}
               alt="Profile"
               className="w-full h-full object-cover"
             />
           </div>
           <div className="mt-16 text-center">
-            <h2 className="text-2xl font-bold text-white mb-2">Sundar Gurung</h2>
-            <p className="text-white/80 text-sm">sundargurung360@gmail.com</p>
+            <h2 className="text-2xl font-bold text-white mb-2">{capitalizeFirstLetter(`${user?.firstName?.toUpperCase()} ${user?.lastName?.toUpperCase()}`)} </h2>
+            <p className="text-white/80 text-sm">{user?.email || ''}</p>
           </div>
         </div>
 

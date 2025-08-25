@@ -35,8 +35,9 @@ export default function Navbar({ onSearch, onMenuItemClick }: NavbarProps) {
             <Menu className="h-6 w-6 text-gray-600" />
           </button>
           <h5 className="text-2xl font-bold hidden lg:block cursor:pointer" onClick={() => navigate('/')}>
-            <span className="text-red-400">Dash</span>
-            <span className="text-gray-800">board</span>
+            <span className="text-red-400">Video</span>
+            <span className="text-gray-800">ToText</span>
+            <span className="text-red-400">AI</span>
           </h5>
         </div>
 

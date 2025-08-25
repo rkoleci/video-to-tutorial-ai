@@ -2,17 +2,7 @@ import { useState, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
 import TutorialCard from './card-ui';
 import { useNavigate } from 'react-router-dom';
-
-export interface Tutorial {
-  title: string;
-  description: string;
-  priority: string;
-  status: string;
-  createdAt: string;
-  imageUrl: string;
-}
-
-
+import type { Tutorial } from '../types';
 
 // Skeleton version of TutorialCard
 function TutorialCardSkeleton() {
@@ -32,19 +22,13 @@ function TutorialCardSkeleton() {
 
 interface IProps {
   tutorials: Tutorial[],
-  skeleton?: number
+  skeleton?: number,
+  loading?: boolean
 }
 
-export default function TutorialGrid({ tutorials, skeleton = 3 }: IProps) {
-  const [loading, setLoading] = useState(true);
+export default function TutorialGrid({ tutorials, skeleton = 3, loading }: IProps) {
   const navigate = useNavigate()
   console.log(1111, { tutorials})
-
-  // Simulate data loading (replace with real fetch logic)
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000); // 2 sec loading
-    return () => clearTimeout(timer);
-  }, []);
 
   const isEmpty = tutorials.length === 0;
 

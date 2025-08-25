@@ -27,8 +27,18 @@ export default class YoutubeService {
         try {
             // Step 1: Get video info
             this.logger.log(`Fetching video info for ${url}`);
-            const videoInfo = await exec(url, { dumpSingleJson: true });
-            const videoTitle = 'video titele 1';
+            const videoInfo = await exec(url, { dumpSingleJson: true }) as any;
+            
+            console.log(111, 'Video Info:', {
+                title: videoInfo.title,
+                description: videoInfo.description?.substring(0, 200) + '...', // Log first 200 chars
+                duration: videoInfo.duration,
+                uploader: videoInfo.uploader
+            });
+
+            // Extract title and description
+            const videoTitle = videoInfo.title || 'Unknown Title';
+            const videoDescription = videoInfo.description || 'No description available';
 
             // Determine output file path
             const outputFileName = output || `${videoTitle}.mp3`;

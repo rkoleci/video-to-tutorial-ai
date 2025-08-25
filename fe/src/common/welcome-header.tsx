@@ -1,7 +1,7 @@
 import { useAuth } from "../hooks/useAuth";
 
 export default function WelcomeHeader() {
-  const { isAuthed } = useAuth()
+  const { isAuthed, user } = useAuth()
 
   if (!isAuthed) {
     return null
@@ -15,7 +15,7 @@ export default function WelcomeHeader() {
         {/* Greeting */}
         <h4 className="text-3xl font-semibold text-black flex items-center space-x-2">
           <span>Welcome back,</span>
-          <span className="font-bold">Sundar</span>
+          <span className="font-bold">{user?.firstName || ''}</span>
           <span className="text-3xl">👋</span>
         </h4>
       </div>

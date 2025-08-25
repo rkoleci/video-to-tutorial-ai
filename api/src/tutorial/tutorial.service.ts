@@ -74,6 +74,7 @@ export default class TutorialService {
     newTutorial.title = ''
     newTutorial.tutorial = ''
     newTutorial.userId = userId;
+    newTutorial.videoDescription = ''
     const savedTutorial = await this.tutorialRepository.save(newTutorial);
 
     try {

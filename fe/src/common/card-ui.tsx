@@ -1,14 +1,10 @@
 import React from 'react';
+import type { Tutorial } from '../types';
 
-interface TutorialCardProps {
-  title: string;
-  description: string;
-  priority: string;
-  status: string;
-  createdAt: string;
-  imageUrl: string;
+interface TutorialCardProps  extends Tutorial{
   onClick: () => void;
 }
+
 // TODO `https://img.youtube.com/vi/${videoId}/${quality}.jpg`
 export default function TutorialCard({
   title,
