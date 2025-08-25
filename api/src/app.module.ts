@@ -12,8 +12,10 @@ import { ExtractionModule } from './extraction/extraction.module';
 import { FileModule } from './file/file.module';
 import { TextModule } from './text/text.module';
 import { AuthModule } from './auth/auth.module';
+import YoutubeService from './core/youtube.service';
+import { CoreModule } from './core/core.module';
 import { MyRedisModule } from './redis/redis.module';
-import { AIModule } from './ai/ai.module';
+import { UsageModule } from './usage/usage.module';
 
 @Module({
   imports: [
@@ -27,36 +29,36 @@ import { AIModule } from './ai/ai.module';
       useFactory: ( ) => ({
         type: 'postgres',
         host: process.env.DB_HOST,
-        port: 5432,
+        port: Number(process.env.DB_PORT),
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
         database:  process.env.DB_NAME,
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+        // synchronize: true,
         logging: true ,
-        ssl: {
-          rejectUnauthorized: false,
-        },
-        extra: {
-          ssl: {
-            rejectUnauthorized: false,
-          },
-        },
+        // ssl: {
+        //   rejectUnauthorized: tru,
+        // },
+        // extra: {
+        //   ssl: {
+        //     rejectUnauthorized: false,
+        //   },
+        // },
       }),
       // inject: [ ],
     }),
     
     
-
-    // Add your other feature modules here
+ 
     TutorialModule,
-    // RabbitMqModule,
+    RabbitMqModule,
     ExtractionModule,
     FileModule,
     TextModule,
     AuthModule,
+    CoreModule,
     MyRedisModule,
-    AIModule
+    UsageModule
     ], 
   controllers: [AppController],
    providers: [AppService], 
@@ -65,4 +67,4 @@ import { AIModule } from './ai/ai.module';
 })
 export class AppModule {}
 
-// next, setup multiole nodejs cosnumers, load testing
+ 

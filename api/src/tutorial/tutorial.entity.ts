@@ -1,8 +1,11 @@
+import { User } from 'src/user/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 export enum StatusEnum {
@@ -35,4 +38,14 @@ export class Tutorial {
     default: StatusEnum.PENDING,
   })
   status: StatusEnum;
+
+  @ManyToOne(() => User, (user) => user.tutorials, { eager: false })
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
+  @Column()
+  userId: string; 
+
+  @Column({ type: 'text' })
+  videoDescription: string;
 }

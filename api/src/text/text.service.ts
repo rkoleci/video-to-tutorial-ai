@@ -8,7 +8,7 @@ export default class TextService {
   constructor(private readonly aiService: AIService) {  }
 
   async getText(): Promise<string> {
-    return this.aiService.completion();
+    return this.aiService.completeTextPrompt('');
   }
 
  
